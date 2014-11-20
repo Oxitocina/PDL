@@ -1,0 +1,6 @@
+var a = 5
+var b = 6
+var c = 6 + 5
+function culo (){
+return 5
+}
