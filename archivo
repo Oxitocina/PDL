@@ -1,6 +1,14 @@
-var a = 5
+
+
+
+
+
+var a = 5 //Culo
 var b = 6
 var c = 6 + 5
-function culo (){
-return 5
+
+
+
+function culo (c){
+return c
 }

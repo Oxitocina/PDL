@@ -13,64 +13,77 @@ class Lexico():
 		self.tabla_sym = SymTable()
 		self.tabla_activa = self.tabla_sym.newTable()
 		self.lexema = ""
-		self.char_leido = ''
+		self.char_leido = self.archivo.read(1)
 		
 	def leer_siguiente(self):
 		self.char_leido = self.archivo.read(1)
 		if not self.char_leido:
 			return False
-		elif self.char_leido == '/':
-			self.char_leido = self.archivo.read(1)
-			if self.char_leido != '/':
-				self.error(1)
-			else:
-				while self.archivo.read(1) != '\n':
-					pass
-				self.leer_siguiente()
 		else:
 			return True
 	
 	def sig_Token(self):
 		
 			
-		if self.leer_siguiente():
-			while self.char_leido.isspace():
-				self.char_leido = self.archivo.read(1)
-			if self.char_leido == '(':
-				return self.gen_Token("LParent")
-			elif self.char_leido == ')':
-				return self.gen_Token("RParent")
-			elif self.char_leido == '{':
-				return self.gen_Token("LBrace")
-			elif self.char_leido == '}':
-				return self.gen_Token("RBrace")
-			elif self.char_leido == '\n':
-				return self.gen_Token("eos")
-			elif self.char_leido == '+':
-				return self.gen_Token("OpArit")
-			elif self.char_leido == '>':
-				return self.gen_Token("OpRelac")
-			elif self.char_leido == '&':
+		
+		while self.char_leido.isspace() and self.char_leido != '\n': #Tratamiento de espacios.
+			self.char_leido = self.archivo.read(1)
+		
+		if self.char_leido == '/': #Tratamiento de comentarios.
+			self.leer_siguiente()
+			if self.char_leido != '/':
+				self.error(1)
+			else:
+				while self.archivo.read(1) != '\n':
+					pass
+				self.char_leido = '\n'
+			
+		if self.char_leido == '(':
+			self.leer_siguiente()
+			return self.gen_Token("LParent")
+		elif self.char_leido == ')':
+			self.leer_siguiente()
+			return self.gen_Token("RParent")
+		elif self.char_leido == '{':
+			self.leer_siguiente()
+			return self.gen_Token("LBrace")
+		elif self.char_leido == '}':
+			self.leer_siguiente()
+			return self.gen_Token("RBrace")
+		elif self.char_leido == '\n':
+			self.leer_siguiente()
+			return self.gen_Token("eos")
+		elif self.char_leido == '+':
+			self.leer_siguiente()
+			return self.gen_Token("OpArit")
+		elif self.char_leido == '>':
+			self.leer_siguiente()
+			return self.gen_Token("OpRelac")
+		elif self.char_leido == '&':
+			self.leer_siguiente()
+			if self.char_leido == '&':
 				self.leer_siguiente()
-				if self.char_leido == '&':
-					return self.gen_Token("OpLogic")
-				else:
-					self.error(1)
-			elif self.char_leido == '?':
-				return self.gen_Token("OpCond", "0")
-			elif self.char_leido == ':':
-				return self.gen_Token("OpCond", "1")
-			elif self.char_leido == '=':
-				return self.gen_Token("OpAsig")
-			elif self.char_leido.isnumeric() or self.char_leido == '-':
-				self.lexema = self.char_leido
-				return self.estado_digito() 
-			elif self.char_leido.isalpha():
-				self.lexema = self.char_leido
-				return self.estado_letra()
+				return self.gen_Token("OpLogic")
 			else:
 				self.error(1)
-			
+		elif self.char_leido == '?':
+			self.leer_siguiente()
+			return self.gen_Token("OpCond", "0")
+		elif self.char_leido == ':':
+			self.leer_siguiente()
+			return self.gen_Token("OpCond", "1")
+		elif self.char_leido == '=':
+			self.leer_siguiente()
+			return self.gen_Token("OpAsig")
+		elif self.char_leido.isnumeric() or self.char_leido == '-':
+			self.lexema = self.char_leido
+			return self.estado_digito() 
+		elif self.char_leido.isalpha():
+			self.lexema = self.char_leido
+			return self.estado_letra()
+		else:
+			self.error(1)
+		
 		
 	def estado_digito(self):
 		self.leer_siguiente()
