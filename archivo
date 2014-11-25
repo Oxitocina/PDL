@@ -3,7 +3,7 @@
 
 
 
-var a = 5 //Culo
+var a = 5 //Culo()
 var b = 6
 var c = 6 + 5
 

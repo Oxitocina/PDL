@@ -53,6 +53,9 @@ class Lexico():
 		elif self.char_leido == '\n':
 			self.leer_siguiente()
 			return self.gen_Token("eos")
+		elif self.char_leido == ',':
+			self.leer_siguiente()
+			return self.gen_Token("Coma")
 		elif self.char_leido == '+':
 			self.leer_siguiente()
 			return self.gen_Token("OpArit")
@@ -68,10 +71,10 @@ class Lexico():
 				self.error(1)
 		elif self.char_leido == '?':
 			self.leer_siguiente()
-			return self.gen_Token("OpCond", "0")
+			return self.gen_Token("OpCond?")
 		elif self.char_leido == ':':
 			self.leer_siguiente()
-			return self.gen_Token("OpCond", "1")
+			return self.gen_Token("OpCond:")
 		elif self.char_leido == '=':
 			self.leer_siguiente()
 			return self.gen_Token("OpAsig")
@@ -98,10 +101,15 @@ class Lexico():
 	def estado_letra(self):
 		
 		self.leer_siguiente()
+		especial = False
 		
-		while self.char_leido.isnumeric() or self.char_leido.isalpha() or self.char_leido == '_':
+		while self.char_leido.isnumeric() or self.char_leido.isalpha() or self.char_leido == '_' or self.char_leido == '.':
+			if self.char_leido == '.':
+				especial = True
 			self.lexema += self.char_leido
 			self.leer_siguiente()
+		if especial and not lexema == 'document.write':
+			self.error(3)
 		if self.lexema in self.tabla_clave:
 			return self.gen_Token("PClave", self.tabla_clave[self.lexema])
 		else:
@@ -118,5 +126,8 @@ class Lexico():
 		elif código == 2:
 			print("Número no soportado: " + self.lexema)
 			exit(2)
+		elif codigo == 3:
+			print("Caracter . no soportado, unicamente en document.write()")
+			exit(3)
 		
 		
